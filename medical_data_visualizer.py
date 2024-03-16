@@ -39,22 +39,20 @@ def draw_cat_plot():
 # Draw Heat Map
 def draw_heat_map():
     # Clean the data
-    df_heat = None
+    df_heat = df.loc[(df['ap_lo'] <= df['ap_hi']) & (df['height'] >= df['height'].quantile(0.025)) & (df['height'] <= df['height'].quantile(0.975)) & (df['weight'] >= df['weight'].quantile(0.025)) & (df['weight'] <= df['weight'].quantile(0.975))]
 
     # Calculate the correlation matrix
-    corr = None
+    corr = df_heat.corr()
 
     # Generate a mask for the upper triangle
-    mask = None
-
-
+    mask = np.triu(np.ones_like(corr, dtype=bool))
+    maxmin = corr.mask(mask == True, 0)
 
     # Set up the matplotlib figure
-    fig, ax = None
+    fig, ax = plt.subplots()
 
     # Draw the heatmap with 'sns.heatmap()'
-
-
+    sns.heatmap(corr, ax=ax, annot=True, fmt=".1f", mask=mask, vmin=maxmin.min().min(), vmax=maxmin.max().max())
 
     # Do not modify the next two lines
     fig.savefig('heatmap.png')
